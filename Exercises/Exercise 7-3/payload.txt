@@ -1,0 +1,15 @@
+REM Title: Force Caps Lock
+REM Author: Patrick Hirsch <HirschP2@nku.edu>
+REM Description: If capslock is ever disabled, Ducky turns it back on.  Use button to stop.
+
+REM Set attackmode as an HID device; leave storage for easy re-arming
+ATTACKMODE HID STORAGE
+
+REM Obligatory enumeration delay, probobly not nessisary in this case
+DELAY 2000
+
+WHILE TRUE
+	IF ( $_CAPSLOCK_ON == FALSE ) THEN
+		CAPSLOCK
+	END_IF
+END_WHILE

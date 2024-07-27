@@ -1,0 +1,6 @@
+REM Title: Exercise 3-3 from USB Rubber Ducky: Keystroke Injection Attacks with Advanced DuckyScript
+REM Author: Patrick Hirsch <HirschP2@nku.edu>
+REM Description: Enumerate appearing as an Apple "Aluminum Mini Keyboard (ANSI)" thus bypassing the Keyboard Setup Menu.
+REM - Untested due to lack of Apple products to test on.
+
+ATTACKMODE HID VID_05ac PID_021d

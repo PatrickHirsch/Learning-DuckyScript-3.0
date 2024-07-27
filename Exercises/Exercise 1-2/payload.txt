@@ -1,0 +1,22 @@
+REM Title: Exercise 1-2 from USB Rubber Ducky: Keystroke Injection Attacks with Advanced DuckyScript
+REM Author: Patrick Hirsch <HirschP2@nku.edu>
+REM Description: For Windows 10, opens PS terminal, runs ls, minimize terminal after 5 seconds
+
+REM Set attackmode as an HID device; leave storage for easy re-arming
+ATTACKMODE HID STORAGE
+
+REM Obligitory enumeration delay:
+DELAY 2000
+
+REM Open 'Run' and wait for it to finish opening
+GUI r
+DELAY 100
+
+REM Open PowerShell pre-loaded with commands to do listing and wait 5 seconds
+STRING powershell -NoExit ls
+ENTER
+
+REM Wait 5 seconds, minimize terminal window
+DELAY 5000
+ALT SPACE
+n

@@ -1,0 +1,29 @@
+REM Title: Exercise 11-1 from USB Rubber Ducky: Keystroke Injection Attacks with Advanced DuckyScript
+REM Author: Patrick Hirsch <HirschP2@nku.edu>
+REM Description: Crash very quickly in Jet Pack Adventure, earn about 14 coins.  Self-destruct script after
+
+REM Set attackmode as an HID device; not storage this time.
+ATTACKMODE HID
+
+REM Obligatory enumeration delay:
+DELAY 2000
+
+HOLD UP
+DELAY 1000
+RELEASE UP
+
+HOLD RIGHT
+DELAY 5000
+RELEASE RIGHT
+
+HOLD UP
+DELAY 1000
+HOLD RIGHT
+DELAY 3500
+RELEASE RIGHT
+DELAY 500
+RELEASE UP
+
+REM "Self-destruct" and appear as a flash drive
+HIDE_PAYLOAD
+ATTACKMODE STORAGE

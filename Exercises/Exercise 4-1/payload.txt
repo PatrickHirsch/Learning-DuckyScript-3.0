@@ -1,0 +1,23 @@
+REM Title: Exercise 4-1 from USB Rubber Ducky: Keystroke Injection Attacks with Advanced DuckyScript
+REM Author: Patrick Hirsch <HirschP2@nku.edu>
+REM Description: For Windows 10, open example.com and fullscreen the browser
+
+REM Set attackmode as an HID device; leave storage for easy re-arming
+ATTACKMODE HID STORAGE
+
+REM Obligitory enumeration delay:
+DELAY 2000
+
+REM Open 'Run' and wait for it to finish opening
+GUI r
+DELAY 100
+
+REM Open https://www.example.com
+STRING https://www.example.com
+ENTER
+DELAY 100
+
+REM Fullscreen the browser
+ALT SPACE
+DELAY 100
+STRING x
