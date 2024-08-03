@@ -246,10 +246,11 @@ EXTENSION TRANSLATE
     END_IF_DEFINED
 END_EXTENSION
 
+
 REM -------------------------------------------------- REM
 
 
-DEFINE FULL_CAVE_SIZE 50
+DEFINE FULL_CAVE_SIZE 75
 
 VAR $TIMER = 0
 VAR $MOVES = 0
@@ -278,10 +279,31 @@ END_FUNCTION
 
 REM Initialize
 FUNCTION initialize()
+	REM Initialize placers to reasonable starting locations
 	$GAME_WALL_L = ( FULL_CAVE_SIZE / 4 )
 	$GAME_WALL_R = ( FULL_CAVE_SIZE - $GAME_WALL_L )
 	$GAME_PLAYER = ( FULL_CAVE_SIZE / 2 )
-    SAVE_HOST_KEYBOARD_LOCK_STATE
+	
+	REM Randomize the wall values a bit, vary them by ± 1/16th of the game's width
+	$_RANDOM_MIN = 0
+	$_RANDOM_MAX = ( $GAME_WALL_L / 4 )
+	IF ($_RANDOM_INT % 2) THEN
+		$GAME_WALL_L = ( $GAME_WALL_L + $_RANDOM_INT )
+	ELSE
+		$GAME_WALL_L = ( $GAME_WALL_L - $_RANDOM_INT )
+	END_IF
+	IF ($_RANDOM_INT % 2) THEN
+		$GAME_WALL_R = ( $GAME_WALL_R + $_RANDOM_INT )
+	ELSE
+		$GAME_WALL_R = ( $GAME_WALL_R - $_RANDOM_INT )
+	END_IF
+
+	REM Randomize Player location ensuring at least a 4 char distance from each wall
+	$_RANDOM_MIN = ( $GAME_WALL_L + 4 )
+	$_RANDOM_MAX = ( $GAME_WALL_R - 4 )
+	$GAME_PLAYER = $_RANDOM_INT
+	
+	SAVE_HOST_KEYBOARD_LOCK_STATE
 END_FUNCTION
 
 REM Print layer
@@ -320,9 +342,9 @@ FUNCTION endGame()
 		$TIMER = ( $TIMER - 1 )
 	END_WHILE
 	STRINGLN BONK!
-    ENTER
-    
-    STRING Left wall: 
+	ENTER
+	
+	STRING Left wall: 
 	$INPUT = $GAME_WALL_L
 	TRANSLATE_INT()
 	
@@ -341,8 +363,17 @@ FUNCTION endGame()
 	STRING Game over. score: 
 	$INPUT = $SCORE
 	TRANSLATE_INT()
-    
-	ATTACKMODE STORAGE
+	
+	REM Replay?
+	$inGame = FALSE
+	ENTER
+	ENTER
+	STRINGLN Press CapsLock to play again
+	WAIT_FOR_CAPS_CHANGE
+	ALT F4
+	RIGHT
+	ENTER
+	RESTART_PAYLOAD
 END_FUNCTION
 
 FUNCTION checkCollision()
@@ -352,11 +383,11 @@ FUNCTION checkCollision()
 END_FUNCTION
 
 FUNCTION scoreingEngine()
-    $SCORE = ($SCORE + 1)
-    IF ( $_CAPSLOCK_ON != $_SAVED_CAPSLOCK_ON ) THEN
-        $MOVES = ($MOVES+1)
-    END_IF
-    SAVE_HOST_KEYBOARD_LOCK_STATE
+	$SCORE = ($SCORE + 1)
+	IF ( $_CAPSLOCK_ON != $_SAVED_CAPSLOCK_ON ) THEN
+		$MOVES = ($MOVES+1)
+	END_IF
+	SAVE_HOST_KEYBOARD_LOCK_STATE
 END_FUNCTION
 
 FUNCTION playRound()
@@ -365,7 +396,7 @@ FUNCTION playRound()
 	ELSE
 		$GAME_PLAYER = ( $GAME_PLAYER - 1 )
 	END_IF
-    scoreingEngine()
+	scoreingEngine()
 	
 	$_RANDOM_MIN = 0
 	$_RANDOM_MAX = 2
@@ -384,31 +415,33 @@ FUNCTION playRound()
 	checkCollision()
 END_FUNCTION
 
-
 REM -------------------------------------------------- REM
-
 
 openNotepad()
 
-REM Start Menu
-STRINGLN Welcome to Ducky Cave
-STRINGLN    as writen by Patrick Hirsch
-ENTER
-$TIMER = 5
-STRING Press CAPSLOCK 5 times to start.....
-WHILE ($TIMER)
-    WAIT_FOR_CAPS_CHANGE
-    BACKSPACE
-    $TIMER = ( $TIMER - 1 )
-END_WHILE
-ENTER
-STRINGLN Starting!
-
-initialize()
-printCaveLayer()
-
 WHILE TRUE
-	playRound()
-    printCaveLayer()
-	checkCollision()
+	REM Start Menu
+	STRINGLN Welcome to Ducky Cave
+	STRINGLN    as writen by Patrick Hirsch
+	ENTER
+	$TIMER = 5
+	STRING Press CAPSLOCK 5 times to start.....
+	WHILE ($TIMER)
+		WAIT_FOR_CAPS_CHANGE
+		BACKSPACE
+		$TIMER = ( $TIMER - 1 )
+	END_WHILE
+	ENTER
+	
+	initialize()
+	STRINGLN Starting!
+	
+	printCaveLayer()
+	
+	VAR $inGame = TRUE
+	WHILE $inGame
+		playRound()
+		printCaveLayer()
+		checkCollision()
+	END_WHILE
 END_WHILE
